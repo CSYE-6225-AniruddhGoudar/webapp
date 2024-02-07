@@ -42,7 +42,7 @@ const updateAccount = async (req, res, next) => {
 
         const user = await account.findOne({ where: { email: authUser } });
         if (!user) {
-            throw new HttpError('User not found', 404);
+            throw new HttpError('User is not found', 404);
         }
         
         if (req.body.email) {
@@ -74,7 +74,7 @@ const getAccount = async (req, res, next) => {
         const user = await account.findOne({ where: { email: authenticatedUser } });
         
         if (!user) {
-            throw new HttpError('User not found', 404);
+            throw new HttpError('User is not found', 404);
         }
 
         res.status(200).json({
