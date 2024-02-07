@@ -1,0 +1,44 @@
+import express from 'express';
+import { basicAuth } from './util/basicAuthentication.js.js';
+import apiRouter from './routes/apiRouter.js';
+import accountRouter from './routes/accountRoute.js';
+import { sequelize } from './util/database.js';
+import { HttpError } from './models/errorHandler.js';
+
+const app = express();
+const PORT = process.env.PORT || 8080;
+
+app.use(express.json());
+
+// Sync database with model
+sequelize.sync()
+  .then(() => {
+    console.log('Database is synchronized with the model.');
+  })
+  .catch((err) => {
+    console.error('Error synchronizing the database:', err);
+  });
+
+// Routes
+app.use('/healthz', apiRouter);
+app.use('/v1/user', accountRouter);
+app.use('/v1/user/self', basicAuth, accountRouter);
+
+// Error handling for unknown routes
+app.use((req, res, next) => {
+  const error = new HttpError('Could not find this route.', 404);
+  next(error);
+});
+
+// Custom error handling middleware
+app.use((error, req, res, next) => {
+  if (res.headerSent) {
+    return next(error);
+  }
+  res.status(error.code || 400);
+  res.json({ message: error.message || 'Bad Request' });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
