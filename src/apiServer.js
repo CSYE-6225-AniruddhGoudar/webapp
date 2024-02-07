@@ -13,10 +13,10 @@ app.use(express.json());
 // Sync database with model
 sequelize.sync()
   .then(() => {
-    console.log('Database is synchronized with the model.');
+    console.log('Database is in syn with the model.');
   })
   .catch((err) => {
-    console.error('Error synchronizing the database:', err);
+    console.error('Error in syncing the database:', err);
   });
 
 // Routes
@@ -26,7 +26,7 @@ app.use('/v1/user/self', basicAuth, accountRouter);
 
 // Error handling for unknown routes
 app.use((req, res, next) => {
-  const error = new HttpError('Could not find this route.', 404);
+  const error = new HttpError('This route is not found.', 404);
   next(error);
 });
 
