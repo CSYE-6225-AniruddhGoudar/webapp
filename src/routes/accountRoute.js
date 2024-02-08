@@ -5,8 +5,6 @@ import Joi from 'joi';
 
 const router = express.Router();
 
-
-// Defining syntax for user creation
 const userCreationSchema = Joi.object({
   first_name: Joi.string().trim().required().label('First name'),
   last_name: Joi.string().trim().required().label('Last name'),
@@ -16,20 +14,21 @@ const userCreationSchema = Joi.object({
 
 const validateUserCreation = async (req, res, next) => {
   try {
-    // Validate request body against Joi schema
+    if (req.headers.authorization) {
+      return res.status(400).json({ error: 'Basic Authorization is enabled' });
+    }
     const { error, value } = userCreationSchema.validate(req.body);
     if (error) {
       const errorMessage = error.details[0].message.replace(/"/g, ''); // I removed quotes as it was setting extra and was not looking good
       return res.status(400).json({ error: `${errorMessage} ` });
     }
 
-    // Check for duplicate email
     const existingUser = await account.findOne({ where: { email: value.email } });
     if (existingUser) {
       return res.status(400).json({ error: 'Email is already in use' });
     }
 
-    // If validation passes and no duplicate email, proceed to the next middleware
+   
     next();
   } catch (err) {
     console.error('Error while validating user creation:', err);
@@ -47,19 +46,17 @@ const userUpdateSchema = Joi.object({
 
 const validateUserUpdate = async (req, res, next) => {
   try {
-    // Validate request body against Joi schema
+    
     const { error, value } = userUpdateSchema.validate(req.body);
     if (error) {
       const errorMessage = error.details[0].message.replace(/"/g, ''); // Remove quotes
       return res.status(400).json({ error: errorMessage });
     }
 
-    // Check if email is being updated
     if (req.body.email) {
       return res.status(400).json({ error: 'Email cannot be updated' });
     }
 
-    // If validation passes and email is not being updated, proceed to the next middleware
     next();
   } catch (err) {
     console.error('Error while validating user update:', err);
@@ -67,10 +64,18 @@ const validateUserUpdate = async (req, res, next) => {
   }
 };
 
+const validateGetUser = (req, res, next) => {
+  if (Object.keys(req.query).length > 0 || Object.keys(req.params).length > 0 
+    || req.headers['content-length'] > 0 || req.params[0] || req.url.includes('?') || req.originalUrl !== '/v1/user/self' ) {
+        res.status(400).json();
+    } else {
+    next();
+  }
+};
 
 // Define route handlers
 
-router.get('/',  getAccount);
+router.get('/',validateGetUser,  getAccount);
 router.post('/', validateUserCreation , createAccount);
 router.delete('/', handleUnsupportedMethods);
 router.put('/', validateUserUpdate, updateAccount);
