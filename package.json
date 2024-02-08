@@ -18,7 +18,9 @@
     "express-validator": "^7.0.1",
     "joi": "^17.12.1",
     "pg": "^8.11.3",
-    "sequelize": "^6.36.0",
+    "sequelize": "^6.36.0"
+  },
+  "devDependencies": {
     "sequelize-cli": "^6.6.2"
   }
 }

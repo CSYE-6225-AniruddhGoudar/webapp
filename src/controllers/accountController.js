@@ -9,7 +9,7 @@ const createAccount = async (req, res, next) => {
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            throw new HttpError(errors.array()[0].msg, 422);
+            throw new HttpError(errors.array()[0].msg, 400);
         }
 
         const { first_name, last_name, email, password } = req.body;
@@ -48,6 +48,12 @@ const updateAccount = async (req, res, next) => {
         if (req.body.email) {
             throw new HttpError('Cannot update email', 400);
         }
+        if (req.body.account_created) {
+            throw new HttpError('Cannot update account_created', 400);
+        }
+        if (req.body.account_updated) {
+            throw new HttpError('Cannot update account_updated', 400);
+        }
 
         if (first_name) user.first_name = first_name;
         if (last_name) user.last_name = last_name;
@@ -55,7 +61,7 @@ const updateAccount = async (req, res, next) => {
 
         await user.save();
 
-        res.status(201).json({
+        res.status(204).json({
             id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
