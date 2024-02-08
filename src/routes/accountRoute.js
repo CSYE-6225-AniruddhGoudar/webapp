@@ -32,7 +32,7 @@ const validateUserCreation = async (req, res, next) => {
     next();
   } catch (err) {
     console.error('Error while validating user creation:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(503).json({ error: 'No DB' });
   }
 };
 
@@ -60,7 +60,7 @@ const validateUserUpdate = async (req, res, next) => {
     next();
   } catch (err) {
     console.error('Error while validating user update:', err);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(503).json({ error: 'No DB' });
   }
 };
 
