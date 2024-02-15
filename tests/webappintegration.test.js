@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../src/apiserver.js';
+import app from 'webapp/src/apiServer.js';
 
 let appNetwork;
 
