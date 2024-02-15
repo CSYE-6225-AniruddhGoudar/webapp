@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 8080;
 app.use(express.json());
 
 // Sync database with model
-sequelize.sync()
+sequelize.sync({force:true})
   .then(() => {
     console.log('Database is in syn with the model.');
   })
@@ -42,3 +42,5 @@ app.use((error, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+export default app;

@@ -1,0 +1,49 @@
+name: webapp Test
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+      
+
+    env:
+      PORT: ${{ secrets.PORT }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      # DATABASE_POOL_MAX: ${{ secrets.DATABASE_POOL_MAX }}
+      # DATABASE_POOL_MIN: ${{ secrets.DATABASE_POOL_MIN }}
+      # DATABASE_POOL_ACQUIRE: ${{ secrets.DATABASE_POOL_ACQUIRE }}
+      # DATABASE_POOL_IDLE: ${{ secrets.DATABASE_POOL_IDLE }}
+      # DROP_DATABASE: ${{ secrets.DROP_DATABASE }}
+    
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Postgres
+      run: |
+        sudo apt update
+        sudo apt install -y postgresql postgresql-contrib
+        sudo systemctl start postgresql.service
+
+        sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DATABASE_NAME }};"
+        sudo -u postgres psql -c "CREATE USER ${{ secrets.DATABASE_USER }} WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';"
+        sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DATABASE_NAME }} TO ${{ secrets.DATABASE_USER }};"
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm run build --if-present
+    - run: npm install
+    - run: npm test
