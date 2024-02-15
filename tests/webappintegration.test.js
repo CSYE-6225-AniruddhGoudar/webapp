@@ -7,8 +7,10 @@ beforeAll(() => {
   appNetwork = app.listen();
 });
 
-afterAll(() => {
-  appNetwork.close();
+afterAll((done) => {
+  appNetwork.close(() => {
+    done();
+  });
 });
 
 
