@@ -27,5 +27,3 @@ jobs:
         cache: 'npm'
     - name: Install Dependencies
       run: npm install
-    - name: Failing the workflow test
-      run: exit 1
