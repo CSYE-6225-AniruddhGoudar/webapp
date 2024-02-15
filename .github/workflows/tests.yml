@@ -20,12 +20,6 @@ jobs:
       DATABASE_USER: ${{ secrets.DATABASE_USER }}
       DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
-      # DATABASE_POOL_MAX: ${{ secrets.DATABASE_POOL_MAX }}
-      # DATABASE_POOL_MIN: ${{ secrets.DATABASE_POOL_MIN }}
-      # DATABASE_POOL_ACQUIRE: ${{ secrets.DATABASE_POOL_ACQUIRE }}
-      # DATABASE_POOL_IDLE: ${{ secrets.DATABASE_POOL_IDLE }}
-      # DROP_DATABASE: ${{ secrets.DROP_DATABASE }}
-    
     
     steps:
     - uses: actions/checkout@v4
@@ -46,4 +40,14 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm run build --if-present
     - run: npm install
+    - name: Start the application
+      run: |
+        npm start &
+        
+    - name: Wait for the application to be ready
+      run: |
+        sleep 10
+        until curl -s http://localhost:8080; do
+        sleep 5
+        done
     - run: npm test
