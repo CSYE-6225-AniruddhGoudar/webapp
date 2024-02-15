@@ -28,7 +28,7 @@ describe('User API Endpoints', () => {
       email = userData.email;
       password = userData.password;
     } catch (error) {
-      console.error('error '+error);
+      console.error('error ',error);
       // Fail the test if database synchronization or user creation fails
       throw new Error(`Failed to set up test data: ${error.message}`);
     }
