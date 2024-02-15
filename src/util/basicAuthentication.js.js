@@ -10,13 +10,13 @@ const basicAuth = async (req, res, next) => {
             return unauthorized(res);
         }
 
-        const user = await account.findOne({ where: { email: userCredentials.name } });
+        const user = await account.findOne({ where: { username: userCredentials.name } });
 
         if (!user || !(await isValidPassword(userCredentials.pass, user.password))) {
             return unauthorized(res);
         }
 
-        req.authenticatedUser = user.email;
+        req.authenticatedUser = user.username;
         next();
     } catch (error) {
         console.error('Error during basic authorization:', error);

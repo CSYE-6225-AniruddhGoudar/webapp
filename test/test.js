@@ -9,7 +9,7 @@ describe("User Endpoint Integration Tests", () => {
     const createUserRes = await axios.post("/v1/user", {
       first_name: "Alice",
       last_name: "Smith",
-      email: "alicesmith@example.com",
+      username: "alicesmith@example.com",
       password: "Anirudh@18",
     });
     expect(createUserRes.status).to.equal(201);
