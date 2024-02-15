@@ -33,8 +33,8 @@ describe("Invalid param", () => {
   });
 });
 
-const firstName = "Anya";
-const lastName = "Goudar";
+const firstName = "Ani";
+const lastName = "G";
 const strongPassword = "anya@1234";
 const email = "anya@young.com";
 
