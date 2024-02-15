@@ -12,13 +12,13 @@ const createAccount = async (req, res, next) => {
             throw new HttpError(errors.array()[0].msg, 400);
         }
 
-        const { first_name, last_name, email, password } = req.body;
+        const { first_name, last_name, username, password } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const createdAccount = await account.create({
             first_name,
             last_name,
-            email,
+            username,
             password: hashedPassword,
         });
 
@@ -26,7 +26,7 @@ const createAccount = async (req, res, next) => {
             id: createdAccount.id,
             first_name: createdAccount.first_name,
             last_name: createdAccount.last_name,
-            email: createdAccount.email,
+            username: createdAccount.username,
             account_created: createdAccount.account_created,
             account_updated: createdAccount.account_updated,
         });
@@ -40,13 +40,13 @@ const updateAccount = async (req, res, next) => {
         const { first_name, last_name, password } = req.body;
         const authUser = req.authenticatedUser;
 
-        const user = await account.findOne({ where: { email: authUser } });
+        const user = await account.findOne({ where: { username: authUser } });
         if (!user) {
             throw new HttpError('User is not found', 404);
         }
         
-        if (req.body.email) {
-            throw new HttpError('Cannot update email', 400);
+        if (req.body.username) {
+            throw new HttpError('Cannot update username', 400);
         }
         if (req.body.account_created) {
             throw new HttpError('Cannot update account_created', 400);
@@ -65,7 +65,7 @@ const updateAccount = async (req, res, next) => {
             id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
-            email: user.email,
+            username: user.username,
             account_created: user.account_created,
             account_updated: user.account_updated,
         });
@@ -77,7 +77,7 @@ const updateAccount = async (req, res, next) => {
 const getAccount = async (req, res, next) => {
     try {
         const authenticatedUser = req.authenticatedUser;
-        const user = await account.findOne({ where: { email: authenticatedUser } });
+        const user = await account.findOne({ where: { username: authenticatedUser } });
         
         if (!user) {
             throw new HttpError('User is not found', 404);
@@ -87,7 +87,7 @@ const getAccount = async (req, res, next) => {
             id: user.id,
             first_name: user.first_name,
             last_name: user.last_name,
-            email: user.email,
+            username: user.username,
             account_created: user.account_created,
             account_updated: user.account_updated,
         });
