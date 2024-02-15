@@ -27,7 +27,6 @@ const validateUserCreation = async (req, res, next) => {
     if (existingUser) {
       return res.status(400).json({ error: 'Email is already in use' });
     }
-
    
     next();
   } catch (err) {
