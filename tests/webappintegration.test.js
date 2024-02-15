@@ -1,97 +1,98 @@
 import request from 'supertest';
-import app from './src/apiServer.js';
-import { sequelize } from '../src/util/database.js';
+import app from '../src/apiserver.js';
+
+let appNetwork;
+
+beforeAll(() => {
+  appNetwork = app.listen();
+});
+
+afterAll(() => {
+  appNetwork.close();
+});
 
 
-describe('User API Endpoints', () => {
-  let userId;
-  let email;
-  let password;
-  let userData;
-
-  beforeAll(async () => {
-    try {
-      await sequelize.sync({ force: true });
-      userData = {
-        first_name: 'Anirudh',
-        last_name: 'Goudar',
-        email: `ani${Date.now()}@example.com`,
-        password: 'password1234',
-      };
-
-      const response = await request(app)
-        .post('/v1/user')
-        .send(userData)
-        .expect(201);
-
-      userId = response.body.id;
-      email = userData.email;
-      password = userData.password;
-    } catch (error) {
-      // Fail the test if database synchronization or user creation fails
-      throw new Error(`Failed to set up test data: ${error.message}`);
-    }
+describe("Health Check", () => {
+  it("200 should be expecting", async () => {
+    const res = await request(app).get("/healthz");
+    expect(res.statusCode).toEqual(200);
   });
+});
 
-  it('should create a new user and retrieve their data', async () => {
-    try {
-      const response = await request(app)
-        .get('/v1/user/self')
-        .auth(email, password)
-        .expect(200);
-
-      expect(response.body.id).toEqual(userId);
-      expect(response.body.first_name).toEqual(userData.first_name);
-      expect(response.body.last_name).toEqual(userData.last_name);
-    } catch (error) {
-      // Fail the test with a specific message if retrieval fails
-      throw new Error(`Failed to retrieve user data: ${error.message}`);
-    }
+describe("405 for other methods", () => {
+  it("405 invalid", async () => {
+    const res = await request(app).put("/healthz");
+    expect(res.statusCode).toEqual(405);
   });
+});
 
-  it('should update user data and verify the changes', async () => {
-    try {
-      if (!userId) {
-        throw new Error('User ID not found. Test 1 may have failed.');
-      }
-
-      const updatedUserData = {
-        first_name: 'Ram',
-        last_name: 'Verma',
-       // password: 'RV@123', // Update password
-      };
-
-      await request(app)
-        .put('/v1/user/self')
-        .send(updatedUserData)
-        .auth(email, password)
-        .expect(204); // No content on successful update
-
-      //password = updatedUserData.password; // Update password for subsequent requests
-
-      // Fetch updated user data using updated credentials
-      const response = await request(app)
-        .get('/v1/user/self')
-        .auth(email, password)
-        .expect(200);
-
-      // Assertions to validate updated user data
-      expect(response.body.id).toEqual(userId);
-      expect(response.body.first_name).toEqual(updatedUserData.first_name);
-      expect(response.body.last_name).toEqual(updatedUserData.last_name);
-    } catch (error) {
-      // Fail the test with a specific message if update or verification fails
-      throw new Error(`Failed to update user data: ${error.message}`);
-    }
+describe("Invalid param", () => {
+  it("Expect 400", async () => {
+    const res = await request(app).get("/healthz").query({ key: "value" });
+    expect(res.statusCode).toEqual(400);
   });
+});
 
-  afterAll(async () => {
-    try {
-      // Close the Sequelize connection after tests are completed
-      await sequelize.close();
-    } catch (error) {
-      // Log an error if closing the connection fails, but don't fail the test
-      console.error('Error closing Sequelize connection:', error);
-    }
+const firstName = "Anya";
+const lastName = "Goudar";
+const strongPassword = "anya@1234";
+const email = "anya@young.com";
+
+const createBasicAuth = (username, password) => {
+  return "Basic " + Buffer.from(username + ":" + password).toString("base64");
+};
+
+const userPath = "/v1/user";
+const selfPath = "/self";
+
+describe("Test Case 1", () => {
+  it("Account Create", async () => {
+    const createUserRequestBody = {
+      first_name: firstName,
+      last_name: lastName,
+      password: strongPassword,
+      email: email,
+    };
+    const accountResponse = await request(app)
+      .post(userPath)
+      .send(createUserRequestBody);
+    expect(accountResponse.statusCode).toEqual(201);
+
+    const getAccountResponse = await request(app)
+      .get(userPath + selfPath)
+      .set("Authorization", createBasicAuth(email, strongPassword));
+    expect(getAccountResponse.statusCode).toEqual(200);
+    expect(getAccountResponse.body.first_name).toEqual(firstName);
+    expect(getAccountResponse.body.last_name).toEqual(lastName);
+    expect(getAccountResponse.body.email).toEqual(email);
+  });
+});
+
+describe("Test case 2", () => {
+  it("Check update", async () => {
+    const updateAccount = {
+      first_name: "Jack",
+      last_name: "Din",
+    };
+    const updateAccountResponse = await request(app)
+      .put(userPath + selfPath)
+      .send(updateAccount)
+      .set("Authorization", createBasicAuth(email, strongPassword));
+    expect(updateAccountResponse.statusCode).toEqual(204);
+
+    const getAccountResponse = await request(app)
+      .get(userPath + selfPath)
+      .set("Authorization", createBasicAuth(email, strongPassword));
+    expect(getAccountResponse.statusCode).toEqual(200);
+    expect(getAccountResponse.body.account_created).not.toEqual(
+      getAccountResponse.body.account_updated
+    );
+    expect(getAccountResponse.body.first_name).toEqual(
+      updateAccount.first_name
+    );
+    expect(getAccountResponse.body.last_name).toEqual(
+      updateAccount.last_name
+    );
+    expect(getAccountResponse.body.email).toEqual(email);
   });
 });
