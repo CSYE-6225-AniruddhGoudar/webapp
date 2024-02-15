@@ -18,6 +18,7 @@ const sequelize = new Sequelize({
   define: {
     timestamps: true, 
   },
+  sync: {alter:true}
 });
 
 
