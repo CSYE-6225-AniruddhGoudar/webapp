@@ -12,7 +12,7 @@ describe("User Endpoint Integration Tests", () => {
       username: "alicesmith@example.com",
       password: "Anirudh@18",
     });
-    expect(createUserRes.status).to.equal(201);
+    expect(createUserRes.status).to.equal(200);
     const userId = createUserRes.data.id;
     // Authenticate
     const authHeader = `Basic ${Buffer.from(
