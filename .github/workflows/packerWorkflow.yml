@@ -1,0 +1,53 @@
+name: Packer Validation and Format
+
+on:
+  pull_request:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  packer_workflow:
+    name: Packer Validation and Format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Zipping the project and copying to the repository
+        run: |
+          cd ../
+          zip -r webapp.zip webapp
+          cd -
+          cp ../webapp.zip .
+
+      - name: Verify zip
+        run: ls -l
+
+      - name: Install Packer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y packer
+
+      - name: Packer Init
+        run: packer init gcpImageBuilder.pkr.hcl
+
+      - name: Packer Format
+        run: |
+          if packer fmt -check -diff gcpImageBuilder.pkr.hcl; then
+            echo "Packer format verification successful"
+          else
+            echo "Packer format verification failed"
+            exit 1
+          fi
+
+      - name: Validating Packer Template
+        run: |
+          if packer validate gcpImageBuilder.pkr.hcl; then
+            echo "Packer validation verification successful"
+          else
+            echo "Packer validation verification failed"
+            exit 1
+          fi

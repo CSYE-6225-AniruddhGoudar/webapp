@@ -1,0 +1,116 @@
+name: Integration, Cloud Auth
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  intandAuth:
+    name: intandAuth
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    env:
+      PORT: ${{ secrets.PORT }}
+      DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+      DATABASE_USER: ${{ secrets.DATABASE_USER }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+      DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Postgres
+        run: |
+          sudo apt update
+          sudo apt install -y postgresql postgresql-contrib
+          sudo systemctl start postgresql.service
+
+          sudo -u postgres psql -c "CREATE DATABASE ${{ secrets.DATABASE_NAME }};"
+          sudo -u postgres psql -c "CREATE USER ${{ secrets.DATABASE_USER }} WITH PASSWORD '${{ secrets.DATABASE_PASSWORD }}';"
+          sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.DATABASE_NAME }} TO ${{ secrets.DATABASE_USER }};"
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm run build --if-present
+      - run: npm install
+
+      - name: Start the application
+        run: |
+          npm start &
+
+      - name: Wait for the application to be ready
+        run: |
+          sleep 10
+          until curl -s http://localhost:8080; do
+            sleep 5
+          done
+
+      - name: Echo Environment Variables
+        run: |
+          echo "PORT: $PORT"
+          echo "DATABASE_NAME: $DATABASE_NAME"
+          echo "DATABASE_USER: $DATABASE_USER"
+          echo "DATABASE_PASSWORD: $DATABASE_PASSWORD"
+          echo "DATABASE_HOST: $DATABASE_HOST"
+
+
+      - run: npm test 
+
+      - name: Create env
+        run: |
+          touch .env
+
+          echo "PORT=${{ secrets.PORT }}" >> .env
+          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
+          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> .env
+          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
+
+          cat .env
+          
+      - name: Delete any created node_modules
+        run: rm -r node_modules
+
+      - name: Zip the project
+        run: |
+          cd ../ && zip -r webapp.zip webapp && cd - && cp ../webapp.zip .
+
+      - name: Check zip
+        run: ls -l
+
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_AUTH_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Use gcloud CLI
+        run: gcloud info
+
+      - name: Setup 'packer'
+        uses: hashicorp/setup-packer@main
+        id: setup
+        with:
+          version: '1.10.1' # or 'latest'
+
+      - name: Run 'packer init'
+        id: init
+        run: packer init gcpImageBuilder.pkr.hcl
+
+      - name: Run 'packer Build'
+        id: packer_build
+        run: |
+          echo "Running packer build"
+          packer build gcpImageBuilder.pkr.hcl

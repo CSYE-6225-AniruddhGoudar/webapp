@@ -1,0 +1,15 @@
+project_id                = "emerald-trilogy-411720"
+source_image_family     = "centos-stream-8"
+disk_size               = 20
+disk_type               = "pd-standard"
+region                  = "us-east1"
+zone                    = "us-east1-b"
+image_name              = "csye6225-CentOS-VM{{timestamp}}"
+image_description       = "Centos 8 VM"
+image_family            = "centos-custom-image"
+image_storage_locations = ["us"]
+image_project_id        = "emerald-trilogy-411720"
+machine_type            = "n1-standard-1"
+ssh_username            = "packer"
+credentials_file        = "emerald-trilogy-411720-70e2ecefe45d.json"
+network                 = "default" // will take default vpc
