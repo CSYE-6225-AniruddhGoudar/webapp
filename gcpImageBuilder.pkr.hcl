@@ -51,19 +51,24 @@ variable "disk_type" {
   default = "pd-standard"
 }
 
+variable "machine_type" {
+  type    = string
+  default = "n1-standard-1"
+}
+
 # https://www.packer.io/docs/builders/googlecompute#required
+
 source "googlecompute" "csye_image_custom" {
-  project_id = var.project_id
-  zone       = var.zone
-  #machine_type = "n1-standard-2"
+  project_id   = var.project_id
+  zone         = var.zone
+  machine_type = var.machine_type
   ssh_username = "packer"
   use_os_login = "false"
 
   # use custom base image that was built
   source_image_family = var.source_image_family
 
-  image_family = var.image_family
-  #image_name        = "consul-${local.image_consul_version}-${var.arch}-base-${local.datestamp}"
+  image_family            = var.image_family
   image_name              = "csye-centos-${local.datestamp}-{{timestamp}}"
   image_description       = "CentOS, CentOS, Stream 8, x86_64 built on 20240110"
   image_storage_locations = ["us"]
@@ -73,28 +78,16 @@ source "googlecompute" "csye_image_custom" {
   tags = ["packer"]
 }
 
-source "googlecompute" "consul-base" {
-  project_id          = var.project_id
-  zone                = var.zone
-  machine_type        = "n1-standard-2"
-  ssh_username        = "packer"
-  use_os_login        = false
-  source_image_family = var.source_image_family
-  image_family        = var.image_family
-  image_name          = "consul-${local.image_consul_version}-${var.arch}-base-${local.datestamp}"
-  image_description   = "Consul base image"
-  tags                = ["packer"]
-}
-
 build {
   sources = [
-    "source.googlecompute.custom_image_webapp"
+    "source.googlecompute.csye_image_custom"
   ]
 
   provisioner "file" {
     source      = "webapp.zip"
     destination = "/tmp/"
   }
+
   provisioner "file" {
     source      = "webapplication.service"
     destination = "/tmp/"
