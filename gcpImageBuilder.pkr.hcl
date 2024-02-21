@@ -56,8 +56,6 @@ variable "machine_type" {
   default = "n1-standard-1"
 }
 
-# https://www.packer.io/docs/builders/googlecompute#required
-
 source "googlecompute" "csye_image_custom" {
   project_id   = var.project_id
   zone         = var.zone
@@ -89,7 +87,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "webapplication.service"
+    source      = "webapp.service"
     destination = "/tmp/"
   }
 
