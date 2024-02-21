@@ -113,4 +113,4 @@ jobs:
         id: packer_build
         run: |
           echo "Running packer build"
-          packer build gcpImageBuilder.pkr.hcl
+          packer build -var 'project_id=${{ secrets.PROJECT_ID}}' gcpImageBuilder.pkr.hcl

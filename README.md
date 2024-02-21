@@ -45,3 +45,10 @@ npm start
 This will start the server, and you can access the application using Postman
 
 The application provides CRUD (Create, Read, Update, Delete) operations for managing data in the PostgreSQL database. 
+
+# Packer
+Customize the packer.hcl file for image configuration
+
+Build the custom image using Packer:
+
+Once build is complete, the custom image is avalable in GCP for VM creation or etc.
