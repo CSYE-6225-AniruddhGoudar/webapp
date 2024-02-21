@@ -92,7 +92,7 @@ build {
     source      = "webapplication.service"
     destination = "/tmp/"
   }
-  
+
   provisioner "shell" {
     scripts = [
       "installscript.sh",
