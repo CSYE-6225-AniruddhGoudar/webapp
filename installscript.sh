@@ -16,19 +16,17 @@ node -v
 # Install postgres
 sudo yum install -y postgresql-server postgresql-contrib
 sudo postgresql-setup --initdb
-sudo systemctl start postgresql.service
-sudo systemctl enable postgresql.service
+sudo systemctl start postgresql
+sudo systemctl enable postgresql
 echo -e "\nINSTALLED POSTGRES\n"
 
 # Setup password for postgresql
 echo "Setting password for postgres user"
-echo "Pablo@18" | sudo passwd --stdin postgres
+echo "Webapp@10" | sudo passwd --stdin postgres
 sudo -u postgres psql -c "CREATE DATABASE anirudhgoudar;"
-sudo -u postgres psql -c "ALTER USER postgres WITH PASSWORD 'password';"
-sudo -u postgres psql -d anirudhgoudar -c "ALTER USER postgres WITH PASSWORD 'password';"
-#sudo -u postgres psql -c "CREATE USER web_user WITH PASSWORD 'bindu@18';"
-#sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE web_db TO web_user;"
+sudo -u postgres psql -c "CREATE USER webuser WITH PASSWORD 'password';"
+sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE anirudhgoudar TO webuser;"
 echo -e "\nCREATED USER & DATABASE\n"
 
 sudo sed -i.bak 's/ident/md5/g' /var/lib/pgsql/data/pg_hba.conf
-sudo systemctl restart postgresql.service
+sudo systemctl restart postgresql
