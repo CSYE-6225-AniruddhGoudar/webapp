@@ -1,4 +1,4 @@
-name: Integration, Cloud Auth
+name: Authentication and Integration
 
 on:
   pull_request:
@@ -6,8 +6,8 @@ on:
       - closed
 
 jobs:
-  intandAuth:
-    name: intandAuth
+  gcpAuth:
+    name: gcpAuth
     if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
 
