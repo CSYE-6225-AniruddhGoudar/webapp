@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "emerald-trilogy-411720",
+  "private_key_id": "70e2ecefe45d779a927c5afa5cccaa7629951880",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCnxAWpQTyXBt7T\nJqc/bCPVqtukOSnwxudkXPH7gv7/ngMfBc/KioOJ08H+Xk1l505gofifu1Fz+8+4\nD6tyJenEDQ2TFsmiXS0wI64qDbduJxwxcu5rFhh+y5fQeKXPu16ooRyB1VR0FAbA\nRgtdhYkmo5Up4nIVfF3hV40ZPJhU+KbwL9K3kXMKFodrQ94bXpZDUCw9kgva2Fhd\nS5q1NsBW050vahfN0bNcpIsJSshzaGVq+j9U5n2LSpvJvcp5wnpF3F3xbEEX1y/4\nWwHcRVSuBYm/OwLC5EuZHFAiJj4LSGa11w975G9JTylVWZLcWV4sPGmwd5YbD2o3\nl2skrocdAgMBAAECggEAJD8SWAy7ugemeelmhinnniDxnowpNxfKY6E/OO+HB5RM\nqVW4nNKLc+pYBgy63TL5+J/WFzDB+vSjXumnyZxOYujND4QDYXyPKFD1LqnTAU4a\n5cYmo+VcunxjWwvOC1E4tOdGQPjl68Rt5vnbN8QDq2D5d9iwfFrn76laV2MDqIvM\n8bgECzp+U11heT2euf61f37l6Ve96Lqdu/eYjpWeAOqZ+sDgWAIgonh7UYV6MeaY\nwlkKH3430Asa4Uf3SLT2fSeq9fP7P4bC4qZhrxRYaA01mHvUd+0HtC4HQiYhuuf1\nD5bnwdG88Bk1HqGczUtTPYf69TfCpVF01uj1AxWX8wKBgQDVu9HbS5bj71DJ54Wn\nFGOOcdFN7BlIDqhArp+LU+nAUK4t6Gmnzcd/mAPDXHe6v4w0Z7cuUP+myqMvoaoc\nHUe3OXs93wSTdvjmj2RoaZ5ACDCcH2cR1shpx8IG8pDolHDvOixE8kCcJeWUjoQ1\nJtaNCuQaAdv0evcct3Rpjdc2SwKBgQDI8RfUmIbLIcGqjkp1xVoxf1oowdfzOKXR\nwecpjBelLDhiVbryP6dnJh70Bk4CiBDT5OHzopTVLMW1Ge6pYt3DU5MWJylc4AeZ\nvWitLr6hODZUgzojPhwNL/EQHS4ea3dUDhPUAeNqYyZf9ayBzpE1L6RdJdughWX6\nvjL41n93NwKBgD487yM4o7vEGHZy4MyCd2snYZebRNFi00PilbrwuISz+cSMhRfE\nKG/TSGU/K+5JkP5BpWnrVEaxg0t/fBWrwRJtvqGJq791SY15+/cbqmVi/SS5UD41\nmS6UaL+1KtVPRIOlIPcCxCW0M2JLDdycbqWrojigifhrRkIqec+y6hR5AoGAQpR3\n8+5SA2588BlTnLA2kV4ELqsD9cgYUWcxQ/fyQb1kNVj4p5nlyuy7ptmL8ZTKFpup\nLoP5UqUSIU6lYKSsnDLN8rIpJ2fnvM4gp/lsGpk4j0on8lN7EfeHpXI1vMiY8lXz\nxfSWOML/jR4m+Z/LR1cw29hWbFqnDq0E0KSp+YMCgYA0ldK52G0ZGiTasDmugFO3\nx0PGtKzc6Kn4qcJMczFqpXZjxnJskfvK+3z7VhVXPpKgpMESIRuc1Tdxpiq3dyxL\nDXH3rlgE0OnvIA3hSjTJKTow6tPPQ1bho8wmyL0nmRru0UcSh+PcVsJnQYYsndde\nd2swQoub52sJiUZmYg8NFQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "emerald-trilogy-411720@appspot.gserviceaccount.com",
+  "client_id": "112400649044118962008",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/emerald-trilogy-411720%40appspot.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
