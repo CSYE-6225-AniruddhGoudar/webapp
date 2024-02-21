@@ -74,16 +74,16 @@ source "googlecompute" "csye_image_custom" {
 }
 
 source "googlecompute" "consul-base" {
-  project_id        = var.project_id
-  zone              = var.zone
-  machine_type      = "n1-standard-2"
-  ssh_username      = "packer"
-  use_os_login      = false
+  project_id          = var.project_id
+  zone                = var.zone
+  machine_type        = "n1-standard-2"
+  ssh_username        = "packer"
+  use_os_login        = false
   source_image_family = var.source_image_family
-  image_family      = var.image_family
-  image_name        = "consul-${local.image_consul_version}-${var.arch}-base-${local.datestamp}"
-  image_description = "Consul base image"
-  tags              = ["packer"]
+  image_family        = var.image_family
+  image_name          = "consul-${local.image_consul_version}-${var.arch}-base-${local.datestamp}"
+  image_description   = "Consul base image"
+  tags                = ["packer"]
 }
 
 build {

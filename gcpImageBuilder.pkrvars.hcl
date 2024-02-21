@@ -1,4 +1,4 @@
-project_id                = "emerald-trilogy-411720"
+project_id              = "emerald-trilogy-411720"
 source_image_family     = "centos-stream-8"
 disk_size               = 20
 disk_type               = "pd-standard"
