@@ -45,3 +45,5 @@ npm start
 This will start the server, and you can access the application using Postman.
 
 The application provides CRUD (Create, Read, Update, Delete) operations for managing data in the PostgreSQL database. 
+
+END
