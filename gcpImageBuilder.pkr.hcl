@@ -16,7 +16,7 @@ packer {
   }
 }
 
-variable "project_id"   {
+variable "project_id" {
   type    = string
   default = "emerald-trilogy-411720"
 }
@@ -57,7 +57,7 @@ variable "machine_type" {
 }
 
 source "googlecompute" "csye_image_custom" {
-  project_id   = var.project_id
+  project_id   = var.project_i
   zone         = var.zone
   machine_type = var.machine_type
   ssh_username = "packer"
