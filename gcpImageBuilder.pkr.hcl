@@ -97,6 +97,6 @@ build {
       "user.sh",
       "systemD.sh"
     ]
-  }
+}
 
 }
