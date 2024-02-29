@@ -55,28 +55,7 @@ jobs:
             sleep 5
           done
 
-      - name: Echo Environment Variables
-        run: |
-          echo "PORT: $PORT"
-          echo "DATABASE_NAME: $DATABASE_NAME"
-          echo "DATABASE_USER: $DATABASE_USER"
-          echo "DATABASE_PASSWORD: $DATABASE_PASSWORD"
-          echo "DATABASE_HOST: $DATABASE_HOST"
-
-
       - run: npm test 
-
-      - name: Create env
-        run: |
-          touch .env
-
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
-          echo "DATABASE_USER=${{ secrets.DATABASE_USER }}" >> .env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
-          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
-
-          cat .env
           
       - name: Delete any created node_modules
         run: rm -r node_modules
