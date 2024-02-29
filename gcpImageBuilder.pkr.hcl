@@ -71,7 +71,7 @@ source "googlecompute" "csye_image_custom" {
   image_description       = "CentOS, CentOS, Stream 8, x86_64 built on 20240110"
   image_storage_locations = ["us"]
   //credentials_file        = "emerald-trilogy-411720-70e2ecefe45d.json"
-  network                 = "default"
+  network = "default"
 
   tags = ["packer"]
 }
