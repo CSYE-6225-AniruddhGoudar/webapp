@@ -11,5 +11,5 @@ image_storage_locations = ["us"]
 image_project_id        = "emerald-trilogy-411720"
 machine_type            = "n1-standard-1"
 ssh_username            = "packer"
-credentials_file        = "emerald-trilogy-411720-70e2ecefe45d.json"
+//credentials_file        = "emerald-trilogy-411720-70e2ecefe45d.json"
 network                 = "default" // will take default vpc
