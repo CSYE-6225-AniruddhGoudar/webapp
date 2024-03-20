@@ -72,7 +72,7 @@ const validateUserUpdate = async (req, res, next) => {
 const validateGetUser = (req, res, next) => {
   if (Object.keys(req.query).length > 0 || Object.keys(req.params).length > 0 
     || req.headers['content-length'] > 0 || req.params[0] || req.url.includes('?') || req.originalUrl !== '/v1/user/self' ) {
-      logger.trace('Something wrong in query/param/body');
+      logger.debug('Something wrong in query/param/body');
         res.status(400).json();
     } else {
     next();
@@ -86,7 +86,7 @@ const putValidationEndpoint = (req, res, next) => {
       Object.keys(query).length > 0 || Object.keys(params).length > 0 ||
       params[0] || url.includes('?') || originalUrl !== '/v1/user/self' ||
       headers['content-length'] === '0') {
-        ogger.trace('Something wrong in query/param/body');
+        logger.debug('Something wrong in query/param/body');
       return res.status(400).json();
   }
   next();
