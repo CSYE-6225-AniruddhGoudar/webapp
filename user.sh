@@ -24,6 +24,11 @@ sudo chmod -R 775 /opt/csye6225/
 
 
 # Create log file for csye6225 service
-sudo touch /var/log/webapp.log
-sudo chown csye6225:csye6225 /var/log/webapp.log
-sudo chmod 775 /var/log/webapp.log
+
+if [ ! -d "/var/log/webappApplication" ]; then
+    sudo mkdir -p /var/log/webappApplication
+fi
+
+sudo touch /var/log/webappApplication/csye6225.log
+sudo chown csye6225:csye6225 /var/log/webappApplication/csye6225.log
+sudo chmod 775 /var/log/webappApplication/csye6225.log
