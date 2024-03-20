@@ -87,6 +87,11 @@ build {
   }
 
   provisioner "file" {
+    source      = "webapp.service"
+    destination = "/tmp/"
+  }
+
+  provisioner "file" {
     source      = "loggingAgentConfig.yaml"
     destination = "/tmp/"
   }
