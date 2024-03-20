@@ -13,13 +13,15 @@ const apihealthCheck = async (req, res) => {
     try {
         await sequelize.authenticate();
         res.status(200).send();
-        logger.info('Authentication Successfull');
+        logger.info('API health check: Authentication Successful');
     } catch(error) {
-        logger.error('Authentication Failed', error);
+        logger.error('API health check: Authentication Failed', error);
         res.status(503).send();
     }
 };
+
 const handleOtherMethods = (req, res) => {
+    logger.warn('Unsupported method called:', req.method);
     res.status(405).send();
 };
 

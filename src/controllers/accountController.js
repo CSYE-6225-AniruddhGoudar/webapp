@@ -5,7 +5,6 @@ import { account } from '../models/account.js';
 import bcrypt from 'bcrypt';
 import logger from '../util/logger.js';
 
-
 const createAccount = async (req, res, next) => {
     try {
         logger.debug('Request body:', req.body);
@@ -34,7 +33,7 @@ const createAccount = async (req, res, next) => {
         });
         logger.info('Created Account Successfully');
     } catch (error) {
-        logger.error('Account Creation Unsuccessfull');
+        logger.error('Account Creation Unsuccessful', error);
         next(error);
     }
 };
@@ -77,7 +76,7 @@ const updateAccount = async (req, res, next) => {
             account_created: user.account_created,
             account_updated: user.account_updated,
         });
-        logger.info('Account Update Successfull');
+        logger.info('Account Update Successful');
     } catch (error) {
         logger.error('Account Update Unsuccessful', error);
         next(error);
@@ -102,7 +101,7 @@ const getAccount = async (req, res, next) => {
             account_created: user.account_created,
             account_updated: user.account_updated,
         });
-        logger.info('Get Account Request Successfull');
+        logger.info('Get Account Request Successful');
     } catch (error) {
         logger.error('Get Account Request Unsuccessful', error);
         next(error);
@@ -110,7 +109,7 @@ const getAccount = async (req, res, next) => {
 };
 
 const handleUnsupportedMethods = (req, res, next) => {
-    logger.trace('Unsupported method called:', req.method);
+    logger.warn('Unsupported method called:', req.method);
     res.status(405).send();
 };
 
