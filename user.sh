@@ -7,12 +7,6 @@ if [ ! -d "/opt/csye6225/" ]; then
     sudo mkdir -p /opt/csye6225/
 fi
 
-# Create log file for csye6225 service
-
-if [ ! -d "/var/log/webappApplication" ]; then
-    sudo mkdir -p /var/log/webappApplication
-fi
-
 # Move webapp.zip and extract its contents
 sudo mv /tmp/webapp.zip /opt/csye6225/
 cd /opt/csye6225/ || exit
@@ -28,7 +22,7 @@ echo "USER CREATED SUCCESFULLY"
 sudo chown -R csye6225:csye6225 /opt/csye6225/
 sudo chmod -R 775 /opt/csye6225/
 
-#sudo touch /var/log/webappApplication/webapp.log
-
-sudo chown csye6225:csye6225 /var/log/webappApplication
-sudo chmod 775 /var/log/webappApplication
+#sudo touch /var/log/webapp.log
+sudo touch /var/log/webapp.log
+sudo chown csye6225:csye6225 /var/log/webapp.log
+sudo chmod 775 /var/log/webapp.log
