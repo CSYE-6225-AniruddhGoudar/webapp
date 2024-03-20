@@ -8,6 +8,7 @@ import logger from '../util/logger.js';
 
 const createAccount = async (req, res, next) => {
     try {
+        logger.debug('Request body:', req.body);
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             throw new HttpError(errors.array()[0].msg, 400);
@@ -45,16 +46,20 @@ const updateAccount = async (req, res, next) => {
 
         const user = await account.findOne({ where: { username: authUser } });
         if (!user) {
+            logger.error('User is not found');
             throw new HttpError('User is not found', 404);
         }
         
         if (req.body.username) {
+            logger.error('Cannot update username');
             throw new HttpError('Cannot update username', 400);
         }
         if (req.body.account_created) {
+            logger.error('Cannot update account_created');
             throw new HttpError('Cannot update account_created', 400);
         }
         if (req.body.account_updated) {
+            logger.error('Cannot update account_updated');
             throw new HttpError('Cannot update account_updated', 400);
         }
 
@@ -85,6 +90,7 @@ const getAccount = async (req, res, next) => {
         const user = await account.findOne({ where: { username: authenticatedUser } });
         
         if (!user) {
+            logger.error('User is not found');
             throw new HttpError('User is not found', 404);
         }
 
@@ -104,6 +110,7 @@ const getAccount = async (req, res, next) => {
 };
 
 const handleUnsupportedMethods = (req, res, next) => {
+    logger.trace('Unsupported method called:', req.method);
     res.status(405).send();
 };
 

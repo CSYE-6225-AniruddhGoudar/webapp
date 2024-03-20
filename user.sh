@@ -28,7 +28,7 @@ echo "CSYE6225 related permissions completed"
 # sudo chmod 775 /var/log/webapp.log
 
 
-echo "creating /var/log/webapplication  directory"
+echo "creating  directory"
 sudo mkdir -p /var/log/webapplication 
 
 sudo chown -R csye6225:csye6225 /var/log/webapplication
