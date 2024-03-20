@@ -9,7 +9,7 @@ const logger = winston.createLogger({
     ),
     transports: [
       new winston.transports.Console(),
-      new winston.transports.File({ filename: process.env.WEBAPP_LOG_PATH ?? '/var/log/webapp/csye6225.log'})
+      new winston.transports.File({ filename: process.env.WEBAPP_LOG_PATH ?? '/var/log/webappApplication/webapp.log'})
     ]
 });
 
