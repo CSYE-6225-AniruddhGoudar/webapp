@@ -1,5 +1,5 @@
 import { sequelize } from '../util/database.js';
-
+import logger from '../util/logger.js';
 
 const apihealthCheck = async (req, res) => {
     res.setHeader('Cache-Control', 'no-cache, no-Store, must-revalidate');
