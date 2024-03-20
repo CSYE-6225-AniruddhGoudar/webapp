@@ -19,5 +19,5 @@ logging:
   service:
     pipelines:
       webapp_pipeline:
-        receivers: [webapp-log]
-        processors: [webapp-processor, move_severity]
+        receivers: [webapp_log]
+        processors: [webapp_processor, move_severity]
