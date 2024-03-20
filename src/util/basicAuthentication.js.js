@@ -1,7 +1,7 @@
 import auth from 'basic-auth';
 import bcrypt from 'bcrypt';
 import { account } from '../models/account.js';
-import logger from '../util/logger.js';
+import logger from './util/logger.js';
 
 const basicAuth = async (req, res, next) => {
     try {

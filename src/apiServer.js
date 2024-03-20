@@ -4,7 +4,7 @@ import apiRouter from './routes/apiRouter.js';
 import accountRouter from './routes/accountRoute.js';
 import { sequelize } from './util/database.js';
 import { HttpError } from './models/errorHandler.js';
-import logger from '../util/logger.js';
+import logger from './util/logger.js';
 
 
 const app = express();
