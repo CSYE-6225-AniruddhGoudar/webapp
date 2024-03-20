@@ -16,6 +16,12 @@ packer {
   }
 }
 
+
+variable "region" {
+  description = "Google  region"
+  default     = "us-central1"
+}
+
 variable "project_id" {
   type    = string
   default = "emerald-trilogy-411720"
@@ -33,7 +39,7 @@ variable "image_family" {
 
 variable "zone" {
   type    = string
-  default = "us-east1-b"
+  default = "us-central1-a"
 }
 
 variable "source_image" {
@@ -53,7 +59,7 @@ variable "disk_type" {
 
 variable "machine_type" {
   type    = string
-  default = "n1-standard-1"
+  default = "e2-medium"
 }
 
 source "googlecompute" "csye_image_custom" {
@@ -62,6 +68,7 @@ source "googlecompute" "csye_image_custom" {
   machine_type = var.machine_type
   ssh_username = "packer"
   use_os_login = "false"
+  region       = var.region
 
   # use custom base image that was built
   source_image_family = var.source_image_family
