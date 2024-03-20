@@ -3,12 +3,12 @@ logging:
     webapp_log:
       type: files
       include_paths:
-        - /var/log/webapp.log
+        - /var/log/webapplication/webapp.log
       record_log_file_path: true
   processors:
     webapp_processor:
       type: parse_json
-      time_key: time
+      time_key: jsonPayload.timestamp
       #time_format: "%Y-%m-%dT%H:%M:%S.%L%Z"
       time_format: "YYYY-MM-DDTHH:mm:ss.SSSZ"
     move_severity:
