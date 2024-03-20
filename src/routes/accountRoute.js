@@ -2,6 +2,7 @@ import express from 'express';
 import { createAccount, updateAccount, handleUnsupportedMethods, getAccount } from '../controllers/accountController.js';
 import { account } from '../models/account.js';
 import Joi from 'joi';
+import logger from '../util/logger.js';
 
 const router = express.Router();
 
