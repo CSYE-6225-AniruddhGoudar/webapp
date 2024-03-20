@@ -13,9 +13,6 @@ echo -e "\n INSTALLED NODEJS\n"
 # Check Node.js version
 node -v
 
-
-
-
 #Postgres Installation for local database commented out becaue we are creating Database in cloud sql instance
 
 # # Install postgres
