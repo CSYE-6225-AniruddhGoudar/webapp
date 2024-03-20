@@ -87,7 +87,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "webapp.service"
+    source      = "loggingAgentConfig.yaml"
     destination = "/tmp/"
   }
 
@@ -95,7 +95,8 @@ build {
     scripts = [
       "installscript.sh",
       "user.sh",
-      "systemD.sh"
+      "systemD.sh",
+      "installOpsAgent.sh"
     ]
   }
 
