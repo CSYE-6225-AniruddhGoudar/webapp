@@ -30,5 +30,6 @@ if [ ! -d "/var/log/webappApplication" ]; then
 fi
 
 #sudo touch /var/log/webappApplication/webapp.log
+
 sudo chown csye6225:csye6225 /var/log/webappApplication
 sudo chmod 775 /var/log/webappApplication
