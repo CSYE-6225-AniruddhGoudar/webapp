@@ -30,12 +30,13 @@ const validateUserCreation = async (req, res, next) => {
    
     next();
   } catch (err) {
+    logger.error('Error while validating user creation', err);
     console.error('Error while validating user creation:', err);
     res.status(503).json({ error: 'No DB' });
   }
 };
 
-//PUT
+
 const userUpdateSchema = Joi.object({
   first_name: Joi.string().trim().optional().label('First name'),
   last_name: Joi.string().trim().optional().label('Last name'),
@@ -58,6 +59,7 @@ const validateUserUpdate = async (req, res, next) => {
 
     next();
   } catch (err) {
+    logger.error('Error while validating user update', err);
     console.error('Error while validating user update:', err);
     res.status(503).json({ error: 'No DB' });
   }

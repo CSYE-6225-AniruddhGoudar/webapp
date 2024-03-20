@@ -3,6 +3,7 @@ import { validationResult, check } from 'express-validator';
 import { HttpError } from '../models/errorHandler.js';
 import { account } from '../models/account.js';
 import bcrypt from 'bcrypt';
+import logger from '../util/logger.js';
 
 
 const createAccount = async (req, res, next) => {
@@ -30,7 +31,9 @@ const createAccount = async (req, res, next) => {
             account_created: createdAccount.account_created,
             account_updated: createdAccount.account_updated,
         });
+        logger.info('Created Account Successfully');
     } catch (error) {
+        logger.error('Account Creation Unsuccessfull');
         next(error);
     }
 };
@@ -69,7 +72,9 @@ const updateAccount = async (req, res, next) => {
             account_created: user.account_created,
             account_updated: user.account_updated,
         });
+        logger.info('Account Update Successfull');
     } catch (error) {
+        logger.error('Account Update Unsuccessful', error);
         next(error);
     }
 };
@@ -91,7 +96,9 @@ const getAccount = async (req, res, next) => {
             account_created: user.account_created,
             account_updated: user.account_updated,
         });
+        logger.info('Get Account Request Successfull');
     } catch (error) {
+        logger.error('Get Account Request Unsuccessful', error);
         next(error);
     }
 };

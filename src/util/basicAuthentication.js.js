@@ -18,7 +18,9 @@ const basicAuth = async (req, res, next) => {
 
         req.authenticatedUser = user.username;
         next();
+        logger.info('Basic Autherization Successfull');
     } catch (error) {
+        logger.error('Basic Autherization Failed', error);
         console.error('Error during basic authorization:', error);
         return res.status(500).send('Internal Server Error');
     }

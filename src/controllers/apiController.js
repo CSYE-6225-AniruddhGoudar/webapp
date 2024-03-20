@@ -13,7 +13,9 @@ const apihealthCheck = async (req, res) => {
     try {
         await sequelize.authenticate();
         res.status(200).send();
+        logger.info('Authentication Successfull');
     } catch(error) {
+        logger.error('Authentication Failed', error);
         res.status(503).send();
     }
 };

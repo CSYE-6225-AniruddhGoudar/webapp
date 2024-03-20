@@ -1,30 +1,16 @@
 import winston from 'winston';
-import path from 'path';
+import dotenv from "dotenv";
+dotenv.config();
 
-const logsDirectory = process.env.NODE_ENV === 'production' ? '.' : '/var/log/';
-
-const myLogger = winston.createLogger({
-  format: winston.format.combine(
-    winston.format.timestamp({
-      format: 'YYYY-MM-DD HH:mm:ss'
-    }),
-    winston.format.printf(info => `${info.timestamp} ${info.level}: ${info.message}`)
-  ),
-  // Defining where to log the messages to which file
-  transports: [
-    new winston.transports.File({
-      filename: path.join(logsDirectory, 'webapp.log'),
-      level: 'info',
-    }),
-  ],
-  exitOnError: false,
+const logger = winston.createLogger({
+    format: winston.format.combine(
+      winston.format.timestamp(),
+      winston.format.json()
+    ),
+    transports: [
+      new winston.transports.Console(),
+      new winston.transports.File({ filename: process.env.WEBAPP_LOG_PATH ?? '/var/log/webapp/csye6225.log'})
+    ]
 });
 
-myLogger.stream = {
-  write: message => {
-    // Using the 'info' log level so that output will be picked up by both transports (console and file)
-    myLogger.info(message.trim());
-  },
-};
-
-export default myLogger;
+export default logger;

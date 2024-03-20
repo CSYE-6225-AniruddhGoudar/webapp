@@ -13,9 +13,11 @@ app.use(express.json());
 // Sync database with model
 sequelize.sync()
   .then(() => {
+    logger.info('Database is in syn with the model');
     console.log('Database is in syn with the model.');
   })
   .catch((err) => {
+    logger.error('Error in syncing the database', err);
     console.error('Error in syncing the database:', err);
   });
 
