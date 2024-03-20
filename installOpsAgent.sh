@@ -9,5 +9,5 @@ sudo service google-fluentd start
 
 sudo mkdir -p /etc/google-cloud-ops-agent
 
-sudo mv /tmp/opsAgentConfig.yaml /etc/google-cloud-ops-agent/config.yaml
+sudo mv /tmp/loggingAgentConfig.yaml /etc/google-cloud-ops-agent/config.yaml
 
