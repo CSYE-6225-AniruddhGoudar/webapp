@@ -4,8 +4,26 @@ import { HttpError } from '../models/errorHandler.js';
 import { account } from '../models/account.js';
 import bcrypt from 'bcrypt';
 import logger from '../util/logger.js';
+import { v4 as uuidv4 } from 'uuid';
+import { PubSub } from '@google-cloud/pubsub';
+
+const topicName = process.env.TOPIC;
+//process.env.GOOGLE_APPLICATION_CREDENTIALS = '/Users/anirudhgoudar/Desktop/Cloud/WebappInt/webapp/emerald-trilogy-411720-70e2ecefe45d.json';
+
+const pubsubmodel = new PubSub();
 
 const createAccount = async (req, res, next) => {
+    let testCondition;
+    console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
+    if(process.env.NODE_ENV === 'test'){
+        testCondition = true;
+    }
+    console.log('testCondition ',testCondition);
+
+    console.log('process.env.NODE_ENV:', process.env.NODE_ENV);
+console.log('testCondition before setting:', testCondition);
+
+const verified = testCondition ? true :false;
     try {
         logger.debug('Request body:', req.body);
         const errors = validationResult(req);
@@ -21,7 +39,30 @@ const createAccount = async (req, res, next) => {
             last_name,
             username,
             password: hashedPassword,
+            isVerified: verified
         });
+
+        const verificationtoken = uuidv4();
+let message;
+        if (!testCondition && createdAccount.username) {
+           
+            message = {
+                email: createdAccount.username,
+                verificationtoken : verificationtoken
+            };
+           
+            const dataBuffer = Buffer.from(JSON.stringify(message));
+            console.log('dataBuffer before publishing: ', dataBuffer); 
+            try{
+                pubsubmodel.topic(topicName).publish(dataBuffer);
+                const userEmail = await account.findOne({ where: { username: createdAccount.username } });
+                console.log('Message published successfully');
+            logger.info('Message published successfully to Pub/Sub ');
+            }catch(error){
+                console.error('Error publishing message to Pub/Sub ', error);
+                logger.error('Error publishing message to Pub/Sub ', error);
+            }
+        }
 
         res.status(201).json({
             id: createdAccount.id,
@@ -48,7 +89,11 @@ const updateAccount = async (req, res, next) => {
             logger.error('User is not found');
             throw new HttpError('User is not found', 404);
         }
-        
+        if (!user.isVerified) {
+            logger.error('User verification not successful');
+            throw new HttpError('User verification not successful', 404);
+            return;
+        }
         if (req.body.username) {
             logger.error('Cannot update username');
             throw new HttpError('Cannot update username', 400);
@@ -91,6 +136,11 @@ const getAccount = async (req, res, next) => {
         if (!user) {
             logger.error('User is not found');
             throw new HttpError('User is not found', 404);
+        }
+        if (!user.isVerified) {
+            logger.error('User verification not successful');
+             throw new HttpError('User verification not successful', 404);
+             return;
         }
 
         res.status(200).json({

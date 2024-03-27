@@ -5,6 +5,7 @@ import accountRouter from './routes/accountRoute.js';
 import { sequelize } from './util/database.js';
 import { HttpError } from './models/errorHandler.js';
 import logger from './util/logger.js';
+import emailVerification from './routes/emailVerificationRoute.js';
 
 
 const app = express();
@@ -27,6 +28,7 @@ sequelize.sync()
 app.use('/healthz', apiRouter);
 app.use('/v1/user', accountRouter);
 app.use('/v1/user/self', basicAuth, accountRouter);
+app.use('/v1/user', emailVerification);
 
 // Error handling for unknown routes
 app.use((req, res, next) => {
