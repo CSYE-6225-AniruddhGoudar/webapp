@@ -19,6 +19,8 @@ jobs:
       DATABASE_USER: ${{ secrets.DATABASE_USER }}
       DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
       DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+      TOPIC:  ${{ secrets.TOPIC }}
+      NODE_ENV: ${{ secrets.NODE_ENV }}
     
     steps:
     - uses: actions/checkout@v4
