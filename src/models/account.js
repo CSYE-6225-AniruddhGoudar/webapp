@@ -38,6 +38,19 @@ const account = sequelize.define('account', {
         allowNull: false,
         defaultValue: Sequelize.NOW,
     },
+    isVerified:{
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false, 
+    },
+    verification_token:{
+        type: DataTypes.STRING,
+        defaultValue: null, 
+    },
+    expiration_time:{
+        type: DataTypes.DATE,
+        defaultValue: null, 
+    }
 },
 {
     createdAt: 'account_created',
