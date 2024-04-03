@@ -91,7 +91,7 @@ const updateAccount = async (req, res, next) => {
         }
         if (!user.isVerified) {
             logger.error('User verification not successful');
-            throw new HttpError('User verification not successful', 404);
+            throw new HttpError('User verification not successful', 403);
             return;
         }
         if (req.body.username) {
@@ -139,7 +139,7 @@ const getAccount = async (req, res, next) => {
         }
         if (!user.isVerified) {
             logger.error('User verification not successful');
-             throw new HttpError('User verification not successful', 404);
+             throw new HttpError('User verification not successful', 403);
              return;
         }
 
