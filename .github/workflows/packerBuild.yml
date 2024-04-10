@@ -102,7 +102,7 @@ jobs:
       - name: Create new instance template version
         id: create_template
         run: |
-            vm_instance_name=${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }} 
+            vm_instance_name=${{ secrets.NEW_IMAGE_NAMEINSTANCE_TEMPLATE_NAME }} 
             previous_instance_name="webapp-vmtemplate"
             region_url=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(region)") #pass PROJECT_REGION through github secrets
             region=$(basename $region_url)
@@ -130,7 +130,7 @@ jobs:
             --subnet=${subnetwork} \
             --create-disk=image=${webappimage_link},boot=yes,auto-delete=yes,device-name=persistent-disk-0,size=${disk_size},type=${disk_type},kms-key=${crypto_kms_key} \
             --tags=${tags} \
-            --metadata=startup-script='${metadata}' \
+            --metadata="startup-script=${metadata}" \
             --service-account=${service_acc} \
             --scopes=${scopes} \
             --reservation-affinity=any
