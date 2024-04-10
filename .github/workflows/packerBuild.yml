@@ -145,7 +145,7 @@ jobs:
         id: mig_rolling
         run: |
             region="${{ secrets.PROJECT_REGION }}"
-            latetst_instance_template_self_link=$(gcloud compute instance-templates describe ${{ steps.create_template.outputs.vm_instance_name }} --region=${secrets.PROJECT_REGION} --format="value(selfLink)")
+            latetst_instance_template_self_link=$(gcloud compute instance-templates describe ${{ steps.create_template.outputs.vm_instance_name }} --region=${region} --format="value(selfLink)")
             managed_instance_group=$(gcloud compute instance-groups managed list --sort-by=creationTimestamp --limit=1 --format="value(name)")
             echo "New Managed Instance Group Variables"
             gcloud compute instance-groups managed rolling-action start-update ${managed_instance_group} --version template=${latetst_instance_template_self_link} --region=${region}
