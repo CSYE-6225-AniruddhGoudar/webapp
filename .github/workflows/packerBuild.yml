@@ -1,14 +1,17 @@
 name: Authentication and Integration
 
+# on:
+#   pull_request:
+#     types:
+#       - closed
 on:
   pull_request:
-    types:
-      - closed
+    branches: [ "main" ]
 
 jobs:
   gcpAuth:
     name: gcpAuth
-    if: ${{ github.event.pull_request.merged == true }}
+    # if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
 
     strategy:
@@ -95,3 +98,58 @@ jobs:
         run: |
           echo "Running packer build"
           packer build gcpImageBuilder.pkr.hcl
+      - name: Create new instance template version
+        id: create_template
+        run: |
+             vm_instance_name=${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }} #webapp-new-instance-template-1
+            previous_instance_name=$(gcloud compute instance-templates list --sort-by=creationTimestamp --format="value(name)" --limit=1)
+            region_url=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(region)") 
+            region=$(basename $region_url)
+            machine_type=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.machineType)")
+            network=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.network)")
+            subnetwork=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.subnetwork)")
+            webapp_image_name=$(gcloud compute images list --filter="${{ secrets.CUSTOM_IMAGE_FAMILY }}" --sort-by=~creationTimestamp --format="value(name)" --limit=1) 
+            webappimage_link=$(gcloud compute images describe ${webapp_image_name} --format="value(selfLink)")
+            crypto_kms_key=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.diskEncryptionKey.kmsKeyName)")
+            disk_size=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.initializeParams.diskSizeGb)")
+            disk_type=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.initializeParams.diskType)")
+            labels=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.labels)")
+            tags=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.tags.items)")
+            metadata=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.metadata.items.value)")
+            service_acc=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.serviceAccounts.email)")
+            scopes=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.serviceAccounts.scopes)")
+            scopes=$(echo "$scopes" | sed "s/\[\|\]//g") 
+            scopes=$(echo "$scopes" | sed "s/ *', *'/,/g") 
+            scopes=$(echo "$scopes" | sed "s/^'//;s/'$//") # Remove single quotes at the start and end
+            gcloud compute instance-templates create ${vm_instance_name} \
+            --instance-template-region=${region} \
+            --machine-type=${machine_type} \
+            --region=${region} \
+            --network=${network} \
+            --subnet=${subnetwork} \
+            --create-disk=image=${webappimage_link},boot=yes,auto-delete=yes,device-name=persistent-disk-0,size=${disk_size},type=${disk_type},kms-key=${crypto_kms_key} \
+            --tags=${tags} \
+            --metadata=startup-script='${metadata}' \
+            --service-account=${service_acc} \
+            --scopes=${scopes} \
+            --reservation-affinity=any
+            echo "::set-output name=vm_instance_name::$vm_instance_name"
+
+      - name: Get latest instance template self link
+        run: |
+            latetst_instance_template_self_link=$(gcloud compute instance-templates describe ${{ steps.create_template.outputs.vm_instance_name }} --region=${{ secrets.PROJECT_REGION }} --format="value(selfLink)")
+
+
+      - name: Get managed instance group
+        run: |
+            managed_instance_group=$(gcloud compute instance-groups managed list --sort-by=creationTimestamp --format="value(name)" --limit=1)
+
+      - name: Start rolling update for managed instance group
+        run: |
+          gcloud compute instance-groups managed rolling-action start-update ${{ steps.get_managed_group.outputs.managed_group }} --version template=${{ steps.get_latest_template.outputs.latest_template_self_link }} --region=${{ secrets.PROJECT_REGION }}
+
+      - name: Wait until rolling update is completed
+        run: |
+          gcloud compute instance-groups managed wait-until ${{ steps.get_managed_group.outputs.managed_group }} \
+          --version-target-reached \
+          --region=${{ secrets.PROJECT_REGION }}
