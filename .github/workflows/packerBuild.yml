@@ -98,10 +98,11 @@ jobs:
         run: |
           echo "Running packer build"
           packer build gcpImageBuilder.pkr.hcl
+
       - name: Create new instance template version
         id: create_template
         run: |
-             vm_instance_name=${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }} #webapp-new-instance-template-1
+            vm_instance_name=${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }} #webapp-new-instance-template-1
             previous_instance_name=$(gcloud compute instance-templates list --sort-by=creationTimestamp --format="value(name)" --limit=1)
             region_url=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(region)") 
             region=$(basename $region_url)
