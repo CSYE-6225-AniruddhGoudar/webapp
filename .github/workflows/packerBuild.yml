@@ -102,18 +102,17 @@ jobs:
       - name: Create new instance template version
         id: create_template
         run: |
-            vm_instance_name=${{ secrets.NEW_IMAGE_NAMEINSTANCE_TEMPLATE_NAME }} 
-            previous_instance_name="webapp-vmtemplate"
-            region_url=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(region)") #pass PROJECT_REGION through github secrets
-            region=$(basename $region_url)
+            vm_instance_name=${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }} 
+            previous_instance_name= ${{ secrets.OLD_INSTANCE_TEMPLATE_NAME }}
+            region=${{ secrets.PROJECT_REGION }}
             machine_type="${{ secrets.MACHINE_TYPE }}"
             network=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.network)")
             subnetwork=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.subnetwork)")
             webapp_image_name=$(gcloud compute images list --filter="family=${{ secrets.CUSTOM_IMAGE_FAMILY }}" --sort-by=~creationTimestamp --format="value(name)" --limit=1) 
             webappimage_link=$(gcloud compute images describe ${webapp_image_name} --format="value(selfLink)")
             crypto_kms_key=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.diskEncryptionKey.kmsKeyName)")
-            disk_size=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.initializeParams.diskSizeGb)")
-            disk_type=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.initializeParams.diskType)")
+            disk_size=${{ secrets.DISK_SIZE }} 
+            disk_type=${{ secrets.DISK_TYPE }} 
             labels=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.labels)")
             tags=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.tags.items)")
             metadata=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.metadata.items.value)")
@@ -130,13 +129,29 @@ jobs:
             --subnet=${subnetwork} \
             --create-disk=image=${webappimage_link},boot=yes,auto-delete=yes,device-name=persistent-disk-0,size=${disk_size},type=${disk_type},kms-key=${crypto_kms_key} \
             --tags=${tags} \
-            --metadata=startup-script="'${metadata}'" \
+            --metadata=startup-script="${metadata}" \
             --service-account=${service_acc} \
             --scopes=${scopes} \
             --reservation-affinity=any
-            latetst_instance_template_self_link=$(gcloud compute instance-templates describe ${vm_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(selfLink)")
-            managed_instance_group="webappmig1"
-            gcloud compute instance-groups managed rolling-action start-update  ${managed_instance_group} --version template=${latetst_instance_template_self_link} --region=${{ secrets.PROJECT_REGION }}
-            gcloud compute instance-groups managed wait-until ${managed_instance_group} \
+            echo "Instance tempale created"
+            echo "::set-output name=vm_instance_name::$vm_instance_name"
+
+       - name: Managed Instance Group Rolling
+        id: mig_rolling
+        run: |
+            region=${{ secrets.PROJECT_REGION }}
+            latetst_instance_template_self_link=$(gcloud compute instance-templates describe ${{ steps.create_template.outputs.vm_instance_name }} --region=${secrets.PROJECT_REGION} --format="value(selfLink)")
+            managed_instance_group=$(gcloud compute instance-groups managed list --sort-by=creationTimestamp --limit=1 --format="value(name)")
+            echo "New Managed Instance Group Variables"
+            gcloud compute instance-groups managed rolling-action start-update ${managed_instance_group} --version template=${latetst_instance_template_self_link} --region=${region}
+            echo "Rolling Update initiated with new instance template"
+            echo "::set-output name=managed_instance_group::$managed_instance_group"
+
+      - name: Stable Verification of Instnace 
+        id: mig_stable
+        run: |
+            region=${{ secrets.PROJECT_REGION }}
+            gcloud compute instance-groups managed wait-until ${{ steps.mig_rolling.outputs.managed_instance_group }} \
             --version-target-reached \
-            --region=${{ secrets.PROJECT_REGION }}
+            --region=${region}
+            echo "Managed Instance group is stable"
