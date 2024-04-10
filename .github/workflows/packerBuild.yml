@@ -93,6 +93,10 @@ jobs:
         id: init
         run: packer init gcpImageBuilder.pkr.hcl
 
+      - ⁠name: Packer Format
+        id: fmt
+        run: packer fmt -check -diff gcpImageBuilder.pkr.hcl
+
       - name: Run 'packer Build'
         id: packer_build
         run: |
