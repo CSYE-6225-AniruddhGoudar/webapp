@@ -136,7 +136,7 @@ jobs:
             echo "Instance tempale created"
             echo "::set-output name=vm_instance_name::$vm_instance_name"
 
-       - name: Managed Instance Group Rolling
+      - name: Managed Instance Group Rolling
         id: mig_rolling
         run: |
             region=${{ secrets.PROJECT_REGION }}
