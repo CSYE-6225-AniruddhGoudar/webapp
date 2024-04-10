@@ -110,7 +110,7 @@ jobs:
             network=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.network)")
             subnetwork=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.subnetwork)")
             webapp_image_name=$(gcloud compute images list --filter="${{ secrets.CUSTOM_IMAGE_FAMILY }}" --sort-by=~creationTimestamp --format="value(name)" --limit=1) 
-            webappimage_link=$(gcloud compute images describe ${webapp_image_name} --format="value(selfLink)")
+            webapp_image_name=$(gcloud compute images list --filter="family=${{ secrets.CUSTOM_IMAGE_FAMILY }}" --sort-by=~creationTimestamp --format="value(name)" --limit=1)
             crypto_kms_key=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.diskEncryptionKey.kmsKeyName)")
             disk_size=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.initializeParams.diskSizeGb)")
             disk_type=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.disks.initializeParams.diskType)")
