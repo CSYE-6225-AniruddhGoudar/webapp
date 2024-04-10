@@ -107,7 +107,8 @@ jobs:
         id: create_template
         run: |
             vm_instance_name="${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }}"
-            previous_instance_name= "${{ secrets.OLD_INSTANCE_TEMPLATE_NAME }}"
+            previous_instance_name="${{ secrets.OLD_INSTANCE_TEMPLATE_NAME }}"
+            region_url=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(region)")
             region="${{ secrets.PROJECT_REGION }}"
             machine_type="${{ secrets.MACHINE_TYPE }}"
             network=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.network)")
