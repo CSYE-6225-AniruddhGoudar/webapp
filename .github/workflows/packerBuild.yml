@@ -102,11 +102,11 @@ jobs:
       - name: Create new instance template version
         id: create_template
         run: |
-            vm_instance_name=${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }} #webapp-new-instance-template-1
-            previous_instance_name=$(gcloud compute instance-templates list --sort-by=creationTimestamp --format="value(name)" --limit=1)
-            region_url=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(region)") 
+            vm_instance_name=${{ secrets.NEW_INSTANCE_TEMPLATE_NAME }} 
+            previous_instance_name="webapp-vmtemplate"
+            region_url=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(region)") #pass PROJECT_REGION through github secrets
             region=$(basename $region_url)
-            machine_type=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.machineType)")
+            machine_type="e2-medium"
             network=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.network)")
             subnetwork=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.networkInterfaces.subnetwork)")
             webapp_image_name=$(gcloud compute images list --filter="${{ secrets.CUSTOM_IMAGE_FAMILY }}" --sort-by=~creationTimestamp --format="value(name)" --limit=1) 
@@ -119,8 +119,8 @@ jobs:
             metadata=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.metadata.items.value)")
             service_acc=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.serviceAccounts.email)")
             scopes=$(gcloud compute instance-templates describe ${previous_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(properties.serviceAccounts.scopes)")
-            scopes=$(echo "$scopes" | sed "s/\[\|\]//g") 
-            scopes=$(echo "$scopes" | sed "s/ *', *'/,/g") 
+            scopes=$(echo "$scopes" | sed "s/\[\|\]//g") # Remove square brackets
+            scopes=$(echo "$scopes" | sed "s/ *', *'/,/g") # Replace "', '" with comma
             scopes=$(echo "$scopes" | sed "s/^'//;s/'$//") # Remove single quotes at the start and end
             gcloud compute instance-templates create ${vm_instance_name} \
             --instance-template-region=${region} \
@@ -134,23 +134,9 @@ jobs:
             --service-account=${service_acc} \
             --scopes=${scopes} \
             --reservation-affinity=any
-            echo "::set-output name=vm_instance_name::$vm_instance_name"
-
-      - name: Get latest instance template self link
-        run: |
-            latetst_instance_template_self_link=$(gcloud compute instance-templates describe ${{ steps.create_template.outputs.vm_instance_name }} --region=${{ secrets.PROJECT_REGION }} --format="value(selfLink)")
-
-
-      - name: Get managed instance group
-        run: |
-            managed_instance_group=$(gcloud compute instance-groups managed list --sort-by=creationTimestamp --format="value(name)" --limit=1)
-
-      - name: Start rolling update for managed instance group
-        run: |
-          gcloud compute instance-groups managed rolling-action start-update ${{ steps.get_managed_group.outputs.managed_group }} --version template=${{ steps.get_latest_template.outputs.latest_template_self_link }} --region=${{ secrets.PROJECT_REGION }}
-
-      - name: Wait until rolling update is completed
-        run: |
-          gcloud compute instance-groups managed wait-until ${{ steps.get_managed_group.outputs.managed_group }} \
-          --version-target-reached \
-          --region=${{ secrets.PROJECT_REGION }}
+            latetst_instance_template_self_link=$(gcloud compute instance-templates describe ${vm_instance_name} --region=${{ secrets.PROJECT_REGION }} --format="value(selfLink)")
+            managed_instance_group="webappmig1"
+            gcloud compute instance-groups managed rolling-action start-update  ${managed_instance_group} --version template=${latetst_instance_template_self_link} --region=${{ secrets.PROJECT_REGION }}
+            gcloud compute instance-groups managed wait-until ${managed_instance_group} \
+            --version-target-reached \
+            --region=${{ secrets.PROJECT_REGION }}
