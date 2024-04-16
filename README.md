@@ -11,6 +11,7 @@ It serves as a basic template for creating web applications with CRUD operations
 
 
 
+
 ## Installation
 
 To get started with the project, follow these steps:
