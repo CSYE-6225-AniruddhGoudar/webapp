@@ -26,9 +26,9 @@ sequelize.sync()
 
 // Routes
 app.use('/healthz', apiRouter);
-app.use('/v1/user', accountRouter);
-app.use('/v1/user/self', basicAuth, accountRouter);
-app.use('/v1/user', emailVerification);
+app.use('/v2/user', accountRouter);
+app.use('/v2/user/self', basicAuth, accountRouter);
+app.use('/v2/user', emailVerification);
 
 // Error handling for unknown routes
 app.use((req, res, next) => {
